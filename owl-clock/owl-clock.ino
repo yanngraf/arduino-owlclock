@@ -14,13 +14,15 @@
 
 // Needs to be updated each time the code is complied again.
 int daysSinceStart = 0; // day since the 
-int euthyroxInterval = 3; // days between the different Euthyrox dosage. 3 = every third day the dosage is a half
-int euthyroxStatus = 0; // 0 = half-dosis ; 1 = full dosis
+int dosisInterval = 3; // days between the different Euthyrox dosage. 3 = every third day the dosage is a half
+int dosisStatus = 0; // 0 = half-dosis ; 1 = full dosis
 
-// Definition of the first day from which to count a half-euthyrox dose
-int euthyroxStartYear = 2018; 
-int euthyroxStartMonth = 1; 
-int euthyroxStartDay = 2; 
+// Definition of the first day from which to count a half dosis
+// In the exampel (2018-1-1) we assume the first January is a half dosis, the 2nd and the 3rd a full one
+// And then it starts over
+int dosisStartYear = 2018;  // Specify year (ex: 2018)
+int dosisStartMonth = 1; // Specify Month (ex: 1 (January)) 
+int dosisStartDay = 1; // Specify Day (ex: 1 (First day of month))
 
 // Servo-related vars
 int angle;
@@ -50,9 +52,7 @@ void setup()  {
   Alarm.alarmRepeat(14,00,00, NoonAlarm);  // 2pm every day
   Alarm.alarmRepeat(22,00,00, EveningAlarm);  // 10pm every day
   Alarm.alarmRepeat(00,00,01, PinAlarm);  // 0am every day (to define the eutyrox pin)
-
-  Alarm.alarmRepeat(19,10,01, PinAlarm);  // Test Pin - 0am every day (to define the eutyrox pin)
-  
+ 
   // Test alarm
   Alarm.timerRepeat(15, Repeats);  
   //Alarm.timerRepeat(100, blinkEyes);       
@@ -61,14 +61,12 @@ void setup()  {
   pinMode(3, OUTPUT); // Blue LED blinking
 
   // Calculate the days since started counting
-  daysSinceStart = rdn(year(), month(), day()) - rdn(euthyroxStartYear, euthyroxStartMonth, euthyroxStartDay);
+  daysSinceStart = rdn(year(), month(), day()) - rdn(dosisStartYear, dosisStartMonth, dosisStartDay);
   Serial.print("Days since start counting euthyrox: ");
   Serial.println(daysSinceStart);
-  Serial.println(getEuthyroxDayStatus(daysSinceStart));
-  
+   
   // initializes the Euthyroy Pin position (Full dosis or Half Dose)
-  MoveServo(getEuthyroxDayStatus(daysSinceStart));
-  
+  MoveServo(getDosisDayStatus(daysSinceStart));
 }
 
 
@@ -87,12 +85,6 @@ void loop()
     Serial.println();
     //delay(4000);
   }
-
-  
-
-  //if (humidity > 60) {
-   // blinkLed (3, 10, 2);
-  //}
 
   Alarm.delay(1000); // wait one second between clock display
 }
@@ -152,47 +144,25 @@ void MoveServo (int pinStatus) {
 // functions to be called when an alarm triggers:
 void MorningAlarm(){
   Serial.println("Alarm: Morning 6:30"); 
-  //tone(piezoPin, 500, 2000);
-  blinkEyes();  
 }
 
 void NoonAlarm(){
   Serial.println("Alarm: Afternoon"); 
-  //tone(piezoPin, 1000, 2000);  
-  blinkEyes(); 
 }
 
 void EveningAlarm(){
   Serial.println("Alarm: Evening"); 
-  //tone(piezoPin, 1500, 2000); 
-  blinkEyes(); 
 }
 
 // Move the Arrow to the "1 or 1/2 euthyrox)
 void PinAlarm() {
 
   // Update the count of days since start 
-  daysSinceStart = rdn(year(), month(), day()) - rdn(euthyroxStartYear, euthyroxStartMonth, euthyroxStartDay);
+  daysSinceStart = rdn(year(), month(), day()) - rdn(dosisStartYear, dosisStartMonth, dosisStartDay);
  
-  MoveServo(getEuthyroxDayStatus(daysSinceStart));
+  MoveServo(getDosisDayStatus(daysSinceStart));
 }
 
-void blinkEyes(){
-
-  int blinkStart = 1;
-  int blinkStop = 0;
-    
-   if (euthyroxStatus == 0) { // if the Servo is on 1 move it to 0 and back to 1 briefly
-    blinkStart = 0;
-    blinkStart = 1;
-   }
-   
-   MoveServo(blinkStart);
-   delay(100);
-   MoveServo(blinkStop);
-
-   Serial.println("Blink");
-}
 
 // 15 seconds timer
 void Repeats() {
@@ -211,11 +181,11 @@ void blinkLed (int pin, int duration, int loops) {
 }
 
 
-int getEuthyroxDayStatus (int euthyroxDay) {
+int getDosisDayStatus (int dosisDay) {
   // Test if it is a Euthyorx half dosis days
   // Returns 0 if it is a half dosis day
-  euthyroxDay = euthyroxDay % euthyroxInterval;
-  return euthyroxDay;
+  dosisDay = dosisDay % dosisInterval;
+  return dosisDay;
 }
 
 
