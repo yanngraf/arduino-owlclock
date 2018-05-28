@@ -7,8 +7,8 @@ Everyday 3rd day, it moves the servo to the other side
 
 
 #Libraries needed
-https://www.pjrc.com/teensy/td_libs_Time.html
-https://www.pjrc.com/teensy/td_libs_TimeAlarms.html
-https://www.pjrc.com/teensy/td_libs_DS1307RTC.html
+- https://www.pjrc.com/teensy/td_libs_Time.html
+- https://www.pjrc.com/teensy/td_libs_TimeAlarms.html
+- https://www.pjrc.com/teensy/td_libs_DS1307RTC.html
 
 For my son
