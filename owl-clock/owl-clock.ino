@@ -1,28 +1,28 @@
 /*
- * Owl Clock
- * A clock that rings an alarm 3 times a day
- * And tell you every third day to take only half euthyrox * 
+ * Owl Clock 
+ * A clock tell you switches state every third day * 
  * Made for Tim *
  */
 
 // Inclusion of all the different libraries needed
 #include <DS1307RTC.h>  // a basic DS1307 library that returns time as a time_t
 #include <TimeLib.h> // the time library 
-#include <TimeAlarms.h> 
+//#include <TimeAlarms.h> 
 #include <Wire.h>
 #include <Servo.h>
 
 // Needs to be updated each time the code is complied again.
+// not sure what daysSinceStart, and the 2 other variables are for anymore...
 int daysSinceStart = 0; // day since the 
 int dosisInterval = 3; // days between the different Euthyrox dosage. 3 = every third day the dosage is a half
-int dosisStatus = 0; // 0 = half-dosis ; 1 = full dosis
+int dosisStatus =  0; // 0 = half-dosis ; 1 = full dosis
 
 // Definition of the first day from which to count a half dosis
 // In the exampel (2018-1-1) we assume the first January is a half dosis, the 2nd and the 3rd a full one
 // And then it starts over
-int dosisStartYear = 2018;  // Specify year (ex: 2018)
-int dosisStartMonth = 1; // Specify Month (ex: 1 (January)) 
-int dosisStartDay = 1; // Specify Day (ex: 1 (First day of month))
+int dosisStartYear = 2019;  // Specify year (ex: 2018)
+int dosisStartMonth = 12; // Specify Month (ex: 1 (January)) 
+int dosisStartDay = 9; // Specify Day (ex: 1 (First day of month))
 
 // Servo-related vars
 int angle;
@@ -48,13 +48,13 @@ void setup()  {
   
   // Alarms
   // create the 3 daily Cortisol alarms 
-  Alarm.alarmRepeat(6,30,00, MorningAlarm);  // 6:30am every day
-  Alarm.alarmRepeat(14,00,00, NoonAlarm);  // 2pm every day
-  Alarm.alarmRepeat(22,00,00, EveningAlarm);  // 10pm every day
-  Alarm.alarmRepeat(00,00,01, PinAlarm);  // 0am every day (to define the eutyrox pin)
+  //Alarm.alarmRepeat(6,30,00, MorningAlarm);  // 6:30am every day
+  //Alarm.alarmRepeat(14,00,00, NoonAlarm);  // 2pm every day
+  //Alarm.alarmRepeat(22,00,00, EveningAlarm);  // 10pm every day
+  //Alarm.alarmRepeat(00,00,01, PinAlarm);  // 0am every day (to define the eutyrox pin)
  
   // Test alarm
-  Alarm.timerRepeat(15, Repeats);  
+  //Alarm.timerRepeat(15, Repeats);  
   //Alarm.timerRepeat(100, blinkEyes);       
   
   // Initialize Pins
@@ -86,7 +86,7 @@ void loop()
     //delay(4000);
   }
 
-  Alarm.delay(1000); // wait one second between clock display
+  //Alarm.delay(1000); // wait one second between clock display
 }
 
 //---------------------------------------------------------------
@@ -133,26 +133,26 @@ void MoveServo (int pinStatus) {
     myServo.write(0);
     Serial.println("Servo Off - 1/2 Eutyrox");
   } else {
-     myServo.write(100);
+     myServo.write(180);
      Serial.println("Servo On - Full Eutyrox");
   }
-  delay(500);
+  delay(1000);
   myServo.detach();
   
 }
 
 // functions to be called when an alarm triggers:
-void MorningAlarm(){
-  Serial.println("Alarm: Morning 6:30"); 
-}
+//void MorningAlarm(){
+//  Serial.println("Alarm: Morning 6:30"); 
+//}
 
-void NoonAlarm(){
-  Serial.println("Alarm: Afternoon"); 
-}
+//void NoonAlarm(){
+//  Serial.println("Alarm: Afternoon"); 
+//}
 
-void EveningAlarm(){
-  Serial.println("Alarm: Evening"); 
-}
+//void EveningAlarm(){
+//  Serial.println("Alarm: Evening"); 
+//}
 
 // Move the Arrow to the "1 or 1/2 euthyrox)
 void PinAlarm() {
@@ -187,5 +187,3 @@ int getDosisDayStatus (int dosisDay) {
   dosisDay = dosisDay % dosisInterval;
   return dosisDay;
 }
-
-
