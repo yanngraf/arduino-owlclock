@@ -10,6 +10,7 @@ const char *monthName[12] = {
   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
 };
 
+tmElements_t tm;
 
 void setup() {
   bool parse=false;
