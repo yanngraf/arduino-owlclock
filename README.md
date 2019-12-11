@@ -6,6 +6,10 @@ It has 3 alarms programed (6:30am, 2pm, 10pm)
 Everyday 3rd day, it moves the servo to the other side
 
 
+![The Board](/documentation/board-mapping-fritzing_bb.png)
+
+
+
 ## Libraries needed
 - https://www.pjrc.com/teensy/td_libs_Time.html
 - https://www.pjrc.com/teensy/td_libs_TimeAlarms.html
