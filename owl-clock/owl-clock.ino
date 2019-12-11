@@ -7,7 +7,7 @@
 // Inclusion of all the different libraries needed
 #include <DS1307RTC.h>  // a basic DS1307 library that returns time as a time_t
 #include <TimeLib.h> // the time library 
-//#include <TimeAlarms.h> 
+#include <TimeAlarms.h> 
 #include <Wire.h>
 #include <Servo.h>
 
@@ -51,7 +51,7 @@ void setup()  {
   //Alarm.alarmRepeat(6,30,00, MorningAlarm);  // 6:30am every day
   //Alarm.alarmRepeat(14,00,00, NoonAlarm);  // 2pm every day
   //Alarm.alarmRepeat(22,00,00, EveningAlarm);  // 10pm every day
-  //Alarm.alarmRepeat(00,00,01, PinAlarm);  // 0am every day (to define the eutyrox pin)
+  Alarm.alarmRepeat(00,00,01, PinAlarm);  // 0am every day (to define the eutyrox pin)
  
   // Test alarm
   //Alarm.timerRepeat(15, Repeats);  
@@ -59,6 +59,8 @@ void setup()  {
   
   // Initialize Pins
   pinMode(3, OUTPUT); // Blue LED blinking
+  //pinMode(led, OUTPUT);
+
 
   // Calculate the days since started counting
   daysSinceStart = rdn(year(), month(), day()) - rdn(dosisStartYear, dosisStartMonth, dosisStartDay);
@@ -77,8 +79,8 @@ void setup()  {
 void loop()
 {
   if (timeStatus() == timeSet) {
+    // displays the time in the console
     digitalClockDisplay();
-    //Serial.println("The time is set TETESTESTEST");
   } else {
     Serial.println("The time has not been set.  Please run the Time");
     Serial.println("TimeRTCSet example, or DS1307RTC SetTime example.");
@@ -86,7 +88,7 @@ void loop()
     //delay(4000);
   }
 
-  //Alarm.delay(1000); // wait one second between clock display
+  Alarm.delay(1000); // wait one second between clock display
 }
 
 //---------------------------------------------------------------
@@ -105,6 +107,7 @@ void digitalClockDisplay(){
   Serial.print(" ");
   Serial.print(year()); 
   Serial.println(); 
+  isTheDay();
 }
 
 
@@ -121,6 +124,33 @@ void printDigits(int digits){
   if(digits < 10)
     Serial.print('0');
   Serial.print(digits);
+}
+
+
+
+
+// functions to be called when an alarm triggers:
+//void MorningAlarm(){
+//  Serial.println("Alarm: Morning 6:30"); 
+//}
+
+//void NoonAlarm(){
+//  Serial.println("Alarm: Afternoon"); 
+//}
+
+//void EveningAlarm(){
+//  Serial.println("Alarm: Evening"); 
+//}
+
+
+
+// Move the Arrow to the "1 or 1/2 euthyrox)
+void PinAlarm() {
+
+  // Update the count of days since start 
+  daysSinceStart = rdn(year(), month(), day()) - rdn(dosisStartYear, dosisStartMonth, dosisStartDay);
+ 
+  MoveServo(getDosisDayStatus(daysSinceStart));
 }
 
 
@@ -141,27 +171,8 @@ void MoveServo (int pinStatus) {
   
 }
 
-// functions to be called when an alarm triggers:
-//void MorningAlarm(){
-//  Serial.println("Alarm: Morning 6:30"); 
-//}
 
-//void NoonAlarm(){
-//  Serial.println("Alarm: Afternoon"); 
-//}
 
-//void EveningAlarm(){
-//  Serial.println("Alarm: Evening"); 
-//}
-
-// Move the Arrow to the "1 or 1/2 euthyrox)
-void PinAlarm() {
-
-  // Update the count of days since start 
-  daysSinceStart = rdn(year(), month(), day()) - rdn(dosisStartYear, dosisStartMonth, dosisStartDay);
- 
-  MoveServo(getDosisDayStatus(daysSinceStart));
-}
 
 
 // 15 seconds timer
@@ -178,6 +189,18 @@ void blinkLed (int pin, int duration, int loops) {
     delay(duration);
     digitalWrite (pin, LOW);
   }
+}
+
+
+void isTheDay() {
+
+
+
+    if (weekday() == 3) {
+        digitalWrite(3, HIGH);
+        Serial.println(weekday());
+
+    }
 }
 
 
