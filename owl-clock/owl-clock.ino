@@ -14,15 +14,15 @@
 // Needs to be updated each time the code is complied again.
 // not sure what daysSinceStart, and the 2 other variables are for anymore...
 int daysSinceStart = 0; // day since the 
-int dosisInterval = 3; // days between the different Euthyrox dosage. 3 = every third day the dosage is a half
-int dosisStatus =  0; // 0 = half-dosis ; 1 = full dosis
+int dosisInterval = 4; // days between the different Euthyrox dosage. 3 = every third day the dosage is a half
+int dosisStatus =  2; // 0 = half-dosis ; 1 = full dosis
 
 // Definition of the first day from which to count a half dosis
 // In the exampel (2018-1-1) we assume the first January is a half dosis, the 2nd and the 3rd a full one
 // And then it starts over
-int dosisStartYear = 2019;  // Specify year (ex: 2018)
-int dosisStartMonth = 12; // Specify Month (ex: 1 (January)) 
-int dosisStartDay = 9; // Specify Day (ex: 1 (First day of month))
+int dosisStartYear = 2020;  // Specify year (ex: 2018)
+int dosisStartMonth = 5; // Specify Month (ex: 1 (January)) 
+int dosisStartDay = 4; // Specify Day (ex: 1 (First day of month))
 
 // Servo-related vars
 int angle;
@@ -46,17 +46,8 @@ void setup()  {
   else
      Serial.println("RTC has set the system time");   
   
-  // Alarms
-  // create the 3 daily Cortisol alarms 
-  //Alarm.alarmRepeat(6,30,00, MorningAlarm);  // 6:30am every day
-  //Alarm.alarmRepeat(14,00,00, NoonAlarm);  // 2pm every day
-  //Alarm.alarmRepeat(22,00,00, EveningAlarm);  // 10pm every day
   Alarm.alarmRepeat(00,00,01, PinAlarm);  // 0am every day (to define the eutyrox pin)
  
-  // Test alarm
-  //Alarm.timerRepeat(15, Repeats);  
-  //Alarm.timerRepeat(100, blinkEyes);       
-  
   // Initialize Pins
   pinMode(3, OUTPUT); // Blue LED blinking
   //pinMode(led, OUTPUT);
@@ -68,7 +59,9 @@ void setup()  {
   Serial.println(daysSinceStart);
    
   // initializes the Euthyroy Pin position (Full dosis or Half Dose)
+  InitializeServo ();
   MoveServo(getDosisDayStatus(daysSinceStart));
+
 }
 
 
@@ -128,22 +121,6 @@ void printDigits(int digits){
 
 
 
-
-// functions to be called when an alarm triggers:
-//void MorningAlarm(){
-//  Serial.println("Alarm: Morning 6:30"); 
-//}
-
-//void NoonAlarm(){
-//  Serial.println("Alarm: Afternoon"); 
-//}
-
-//void EveningAlarm(){
-//  Serial.println("Alarm: Evening"); 
-//}
-
-
-
 // Move the Arrow to the "1 or 1/2 euthyrox)
 void PinAlarm() {
 
@@ -154,13 +131,22 @@ void PinAlarm() {
 }
 
 
+
+void InitializeServo () {
+  // initializing the servo / Bringing it t zero position 
+  myServo.attach(9);
+  Serial.println("servo initalized" + myServo.read());
+  myServo.write(0);
+  delay(2000);
+}
+
 void MoveServo (int pinStatus) { 
   // Servor mouvement function (on and off)
   // Accepts 0 = Half-dose OR everything else = Full Dose
-  myServo.attach(9);
-  
+  // myServo.attach(9);
+
   if (pinStatus == 0) {
-    myServo.write(0);
+    myServo.write(30);
     Serial.println("Servo Off - 1/2 Eutyrox");
   } else {
      myServo.write(180);
@@ -170,8 +156,6 @@ void MoveServo (int pinStatus) {
   myServo.detach();
   
 }
-
-
 
 
 
@@ -194,12 +178,9 @@ void blinkLed (int pin, int duration, int loops) {
 
 void isTheDay() {
 
-
-
     if (weekday() == 3) {
         digitalWrite(3, HIGH);
         Serial.println(weekday());
-
     }
 }
 
