@@ -14,8 +14,8 @@
 // Needs to be updated each time the code is complied again.
 // not sure what daysSinceStart, and the 2 other variables are for anymore...
 int daysSinceStart = 0; // day since the 
-int dosisInterval = 4; // days between the different Euthyrox dosage. 3 = every third day the dosage is a half
-int dosisStatus =  2; // 0 = half-dosis ; 1 = full dosis
+int dosisInterval = 3; // days between the different Euthyrox dosage. 3 = every third day the dosage is a half
+int dosisStatus =  0; // 0 = half-dosis ; 1 = full dosis
 
 // Definition of the first day from which to count a half dosis
 // In the exampel (2018-1-1) we assume the first January is a half dosis, the 2nd and the 3rd a full one
@@ -50,6 +50,8 @@ void setup()  {
  
   // Initialize Pins
   pinMode(3, OUTPUT); // Blue LED blinking
+  myServo.attach(9);
+
   //pinMode(led, OUTPUT);
 
 
@@ -111,7 +113,7 @@ int rdn(int y, int m, int d) { /* Rata Die day one is 0001-01-01 */
     return 365*y + y/4 - y/100 + y/400 + (153*m - 457)/5 + d - 306;
 }
 
-void printDigits(int digits){
+void printDigits(int digits) {
   // utility function for digital clock display: prints preceding colon and leading 0
   Serial.print(":");
   if(digits < 10)
@@ -123,10 +125,10 @@ void printDigits(int digits){
 
 // Move the Arrow to the "1 or 1/2 euthyrox)
 void PinAlarm() {
-
   // Update the count of days since start 
   daysSinceStart = rdn(year(), month(), day()) - rdn(dosisStartYear, dosisStartMonth, dosisStartDay);
- 
+  
+  InitializeServo ();
   MoveServo(getDosisDayStatus(daysSinceStart));
 }
 
@@ -134,7 +136,6 @@ void PinAlarm() {
 
 void InitializeServo () {
   // initializing the servo / Bringing it t zero position 
-  myServo.attach(9);
   Serial.println("servo initalized" + myServo.read());
   myServo.write(0);
   delay(2000);
